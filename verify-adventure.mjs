@@ -23,6 +23,9 @@ run('chooseCharacter()');assert.ok(nodes.get('#screen').innerHTML.includes('hero
 assert.ok(nodes.get('#screen').innerHTML.includes('id="selection-voice"'),'The player can replay the spoken selection prompt');
 assert.equal(run('CHARACTERS.length'),3);
 run("state.character='rumi';renderCharacter();map()");
+assert.ok(nodes.get('#screen').innerHTML.includes('id="story-play"'),'The story leads to one play button');
+assert.ok(!nodes.get('#screen').innerHTML.includes('data-branch='),'A child never has to choose a challenge mode in the story');
+assert.equal(run("chapterScript(0,{missions:0}).map(beat=>beat.speaker).join(',')"),'unicorn,ariel','The opening script includes both characters');
 assert.ok(run("characterSVG().includes('assets/rumi.png')"));
 run("state.character='mira';renderCharacter()");
 assert.ok(run("characterSVG().includes('assets/mira.png')"));

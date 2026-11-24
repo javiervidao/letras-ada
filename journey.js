@@ -39,6 +39,46 @@ const ALMA_LINES = {
   27: '¡Lo hemos conseguido, Ada! Solo falta la última misión. Cuando vuelvas, cantaré contigo.'
 };
 
+function chapterScript(stage, progress) {
+  const episode = JOURNEY[stage];
+  if (progress.missions > 0 && !progress.learned) {
+    return [{ speaker: 'unicorn', object: '✨', line: 'Ya encontramos algunas luces. Nos quedan más por buscar. ¿Seguimos?' }];
+  }
+  const withoutTouchCue = line => line.replace(/ (?:Toca [^.!?]+|Tócala|Tócalo)[.!?]$/, '');
+  const opening = withoutTouchCue(episode[1]);
+  const turn = withoutTouchCue(episode[3]);
+  return [
+    { speaker: 'unicorn', object: episode[2], line: opening },
+    { speaker: ALMA_LINES[stage] ? 'ariel' : 'unicorn', object: ALMA_LINES[stage] ? '🐚' : episode[5], line: ALMA_LINES[stage] || turn }
+  ];
+}
+
+async function narrateChapter(beats) {
+  const token = flow;
+  const scene = $('#story-stage');
+  const replay = $('#story-replay');
+  replay.disabled = true;
+  for (const [index, beat] of beats.entries()) {
+    if (flow !== token) return;
+    const ariel = beat.speaker === 'ariel';
+    scene.innerHTML = `<div class="story-shot ${ariel ? 'shot-water' : 'shot-land'}">
+      <img src="assets/${ariel ? 'alma' : 'unicorn'}.png" alt="${ariel ? 'Ariel' : 'Unicornio'}">
+      <span class="shot-object" aria-hidden="true">${beat.object}</span>
+      <span class="shot-spark spark-one" aria-hidden="true">✦</span><span class="shot-spark spark-two" aria-hidden="true">✧</span>
+    </div>`;
+    const caption = $('#story-caption');
+    caption.hidden = false;
+    caption.textContent = beat.line;
+    actorMotion(ariel ? 'wave' : 'happy', 850);
+    const spoken = index === beats.length - 1 ? beat.line + ' Toca el triángulo dorado para jugar.' : beat.line;
+    await Promise.all([tell(spoken, beat.object), sleep(850)]);
+  }
+  if (flow !== token) return;
+  replay.disabled = false;
+  scene.classList.add('story-told');
+  $('#story-play').classList.add('story-ready');
+}
+
 function journeyUnit(stage) {
   const unit = stages[stage].unit;
   return unit ? unit.toUpperCase() : 'AEIOU';
@@ -90,70 +130,26 @@ function storyChoice() {
   const stage = state.stage;
   const episode = JOURNEY[stage];
   const progress = journeyProgress(stage);
-  const alma = ALMA_LINES[stage];
-  const canChoose = () => progress.opened && (!alma || progress.metAlma);
+  const beats = chapterScript(stage, progress);
   updateScene();
-  screen.innerHTML = `<section class="mission-hub story-chapter journey-scene">${fireflies()}
+  screen.innerHTML = `<section class="mission-hub story-chapter journey-scene story-cinema">
     <h1>${episode[0]}</h1>
-    <div class="journey-letter">${journeyUnit(stage)}</div>
-    <button id="story-object" class="journey-object" aria-label="Tocar el objeto de la historia" ${progress.opened ? 'hidden' : ''}>${episode[2]}<span class="story-touch" aria-hidden="true">👆</span></button>
-    <button id="story-hear" class="story-mascot" aria-label="Escuchar la escena"><img src="assets/unicorn.png" alt=""><span>🔊</span></button>
-    ${alma ? `<button id="story-alma" class="story-alma" aria-label="Escuchar a Ariel, la sirena" ${progress.opened ? '' : 'hidden'}><img src="assets/alma.png" alt="" onerror="this.hidden=true"><span>🐚 🔊</span></button>` : ''}
-    <div id="story-paths" class="story-branches child-paths" ${canChoose() ? '' : 'hidden'}>
-      <button class="world-play" data-branch="0" aria-label="Jugar con las pistas"><span aria-hidden="true">▶</span><small>Jugar</small></button>
-      <button data-branch="1" aria-label="Jugar con música"><span aria-hidden="true">🎵</span><small>Música</small></button>
-    </div>
-    <button id="trophy-room" class="round-tool" aria-label="Ver mis trofeos">🏆</button>
+    <div id="story-stage"><div class="story-shot shot-land"><img src="assets/unicorn.png" alt="Unicornio"></div></div>
+    <p id="story-caption" hidden></p>
+    <button id="story-play" class="world-play" aria-label="Empezar la misión"><span aria-hidden="true">▶</span> Jugar</button>
+    <div class="finish-tools"><button id="story-replay" class="round-tool story-replay" aria-label="Escuchar la historia otra vez">🔊</button><button id="trophy-room" class="round-tool" aria-label="Ver mis trofeos">🏆</button></div>
   </section>`;
-  const playHelp = 'Toca el triángulo grande para jugar. Si prefieres la música, toca las notas.';
-  const hear = () => tell(canChoose() ? playHelp : progress.opened ? episode[3] : episode[1], '🦄');
-  $('#story-hear').onclick = () => { gesture(); hear(); };
+  const narrate = () => { gesture(); narrateChapter(beats); };
+  $('#story-replay').onclick = narrate;
   $('#trophy-room').onclick = trophyRoom;
-  $('#story-object').onclick = () => {
+  $('#story-play').onclick = () => {
     gesture();
-    const object = $('#story-object');
-    object.classList.remove('story-awake');
-    void object.offsetWidth;
-    object.classList.add('story-awake');
-    actorMotion('wave', 1000);
-    sparks();
-    chime();
     progress.opened = true;
+    state.branch = (stage + progress.missions) % 2;
     save();
-    if (alma) $('#story-alma').hidden = false;
-    const token = flow;
-    setTimeout(() => { if (token === flow) object.hidden = true; }, 620);
-    $('#story-paths').hidden = !canChoose();
-    tell(episode[3] + (alma ? '' : ' ' + playHelp), '🦄');
+    game();
   };
-  if (alma) $('#story-alma').onclick = () => {
-    gesture();
-    const button = $('#story-alma');
-    button.classList.remove('alma-sings');
-    void button.offsetWidth;
-    button.classList.add('alma-sings');
-    progress.metAlma = true;
-    save();
-    sparks();
-    const token = flow;
-    const revealPaths = () => {
-      if (token !== flow) return;
-      $('#story-paths').hidden = false;
-    };
-    Promise.race([tell(alma + ' ' + playHelp, '🐚'), sleep(3300)]).then(revealPaths);
-  };
-  screen.querySelectorAll('[data-branch]').forEach(button => button.onclick = async () => {
-    if (advancing) return;
-    gesture();
-    advancing = true;
-    const token = flow;
-    state.branch = Number(button.dataset.branch);
-    save();
-    button.classList.add('branch-chosen');
-    await Promise.race([tell(state.branch ? 'Sigue las notas y escucha las pistas.' : 'Sigue las pistas y reúne las letras.', '✨'), sleep(1400)]);
-    if (flow === token) game();
-  });
-  if (activeGesture) hear();
+  if (activeGesture) narrateChapter(beats);
 }
 
 function trophyRoom() {

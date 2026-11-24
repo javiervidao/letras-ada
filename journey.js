@@ -96,16 +96,17 @@ function storyChoice() {
   screen.innerHTML = `<section class="mission-hub story-chapter journey-scene">${fireflies()}
     <h1>${episode[0]}</h1>
     <div class="journey-letter">${journeyUnit(stage)}</div>
-    <button id="story-object" class="journey-object" aria-label="Tocar el objeto de la historia">${episode[2]}<span class="story-touch" aria-hidden="true">👆</span></button>
+    <button id="story-object" class="journey-object" aria-label="Tocar el objeto de la historia" ${progress.opened ? 'hidden' : ''}>${episode[2]}<span class="story-touch" aria-hidden="true">👆</span></button>
     <button id="story-hear" class="story-mascot" aria-label="Escuchar la escena"><img src="assets/unicorn.png" alt=""><span>🔊</span></button>
     ${alma ? `<button id="story-alma" class="story-alma" aria-label="Escuchar a Ariel, la sirena" ${progress.opened ? '' : 'hidden'}><img src="assets/alma.png" alt="" onerror="this.hidden=true"><span>🐚 🔊</span></button>` : ''}
-    <div id="story-paths" class="story-branches" ${canChoose() ? '' : 'hidden'}>
-      <button data-branch="0" aria-label="Camino de las pistas"><span>🔎</span><small>Pistas</small></button>
-      <button data-branch="1" aria-label="Camino musical"><span>🎵</span><small>Música</small></button>
+    <div id="story-paths" class="story-branches child-paths" ${canChoose() ? '' : 'hidden'}>
+      <button class="world-play" data-branch="0" aria-label="Jugar con las pistas"><span aria-hidden="true">▶</span><small>Jugar</small></button>
+      <button data-branch="1" aria-label="Jugar con música"><span aria-hidden="true">🎵</span><small>Música</small></button>
     </div>
     <button id="trophy-room" class="round-tool" aria-label="Ver mis trofeos">🏆</button>
   </section>`;
-  const hear = () => tell(canChoose() ? 'Elige las pistas o la música.' : progress.opened ? episode[3] : episode[1], '🦄');
+  const playHelp = 'Toca el triángulo grande para jugar. Si prefieres la música, toca las notas.';
+  const hear = () => tell(canChoose() ? playHelp : progress.opened ? episode[3] : episode[1], '🦄');
   $('#story-hear').onclick = () => { gesture(); hear(); };
   $('#trophy-room').onclick = trophyRoom;
   $('#story-object').onclick = () => {
@@ -120,9 +121,10 @@ function storyChoice() {
     progress.opened = true;
     save();
     if (alma) $('#story-alma').hidden = false;
-    if (alma && !progress.metAlma) object.hidden = true;
+    const token = flow;
+    setTimeout(() => { if (token === flow) object.hidden = true; }, 620);
     $('#story-paths').hidden = !canChoose();
-    tell(episode[3] + (alma ? '' : ' Elige las pistas o la música.'), '🦄');
+    tell(episode[3] + (alma ? '' : ' ' + playHelp), '🦄');
   };
   if (alma) $('#story-alma').onclick = () => {
     gesture();
@@ -134,8 +136,11 @@ function storyChoice() {
     save();
     sparks();
     const token = flow;
-    const revealPaths = () => { if (token === flow) $('#story-paths').hidden = false; };
-    Promise.race([tell(alma, '🐚'), sleep(3300)]).then(revealPaths);
+    const revealPaths = () => {
+      if (token !== flow) return;
+      $('#story-paths').hidden = false;
+    };
+    Promise.race([tell(alma + ' ' + playHelp, '🐚'), sleep(3300)]).then(revealPaths);
   };
   screen.querySelectorAll('[data-branch]').forEach(button => button.onclick = async () => {
     if (advancing) return;
@@ -176,13 +181,15 @@ function addStoryEnding() {
   const episode = JOURNEY[stage];
   const progress = journeyProgress(stage);
   const learned = progress.learned;
-  const message = learned ? episode[4] : '¡Una misión más! El unicornio guarda tus notas. Puedes seguir cuando quieras.';
+  const message = learned ? episode[4] : '¡Lo has conseguido! El unicornio guarda tus notas.';
+  const instruction = message + ' Toca el triángulo grande para seguir. Si quieres descansar, toca la casita.';
   screen.querySelector('.mission-finish h1').textContent = episode[0];
   screen.querySelector('.mission-finish p').textContent = message;
   screen.querySelector('.collected-notes').innerHTML = journeyBadge(stage, learned ? 'letter' : progress.missions === 3 ? 'practice' : 'path');
   $('#mission-next').textContent = learned ? (stage === 27 ? '▶ Concierto' : '▶ Siguiente escena') : '▶ Seguir';
+  $('#finish-hear').onclick = () => { gesture(); tell(instruction, '▶'); };
   $('#mission-treasure').textContent = '🏆';
   $('#mission-treasure').setAttribute('aria-label','Ver mis trofeos');
   $('#mission-treasure').onclick = trophyRoom;
-  if (activeGesture) tell(message, episode[5]);
+  if (activeGesture) tell(instruction, '▶');
 }

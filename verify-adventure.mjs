@@ -48,9 +48,14 @@ for(let stage=0;stage<28;stage++)for(let difficulty=0;difficulty<3;difficulty++)
   assert.ok(run("state.session.type!=='build'||state.session.parts.join('')===state.session.answer"));
  }
 }
-run('state.stage=1;state.step=0;state.history=[]');
+run('state.stage=1;state.step=3;state.history=[]');
 const syllables=new Set();for(let i=0;i<10;i++)syllables.add(run('newChallenge(state).answer'));
 assert.equal(syllables.size,5,'Initial L rotates the five direct syllables without fabricated inverses');
+run('state.step=0;state.voiceAllowed=false;game({fresh:true})');
+assert.equal(run('state.session.type'),'read');
+assert.match(dynamic.get('#exercise').innerHTML,/id="read-word"/);
+assert.match(dynamic.get('#task-tools').innerHTML,/id="read-complete"/);
+assert.doesNotMatch(dynamic.get('#task-tools').innerHTML,/id="mic"/);
 for(const [heard,expected] of [['ele','l'],['y','i'],['eme','m'],['uve','v'],['mamá','mamá']])assert.ok(run(`recognizedMatches(${JSON.stringify(heard)},${JSON.stringify(expected)})`));
 assert.equal(run("recognizedMatches('pina','piña')"),false);
 run('state.stage=1;state.step=0;state.stars=0;state.session=newChallenge(state);creditChallenge(state);creditChallenge(state);save()');

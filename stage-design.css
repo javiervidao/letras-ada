@@ -129,3 +129,27 @@ body[data-route="game"] .character-stage::after {
   .adventure:has(.story-cinema) .character-tools { display:none }
 }
 @media(prefers-reduced-motion:reduce){.story-shot img,.shot-object,.shot-spark,.story-cinema #story-play.story-ready{animation:none}}
+
+/* Keep letterforms upright and consistent even with legacy saved preferences. */
+.challenge .reading,.linked .challenge .reading,
+.challenge .word-slot,.challenge .letter-find,.challenge .model-clue {
+  font-family:Verdana, Arial, sans-serif;
+  font-style:normal;
+  font-weight:600;
+  font-variant-ligatures:none;
+  letter-spacing:.025em;
+}
+.challenge .reading .vowel { color:inherit }
+.challenge .read-card { text-align:center;min-width:0;padding-block:20px }
+.challenge #read-word {
+  font-size:clamp(32px,9vw,76px);line-height:1.18;
+  margin:0;overflow-wrap:normal;word-break:normal;
+}
+.challenge #read-model { margin-top:10px;font-size:clamp(23px,5vw,35px);color:#553367 }
+.challenge .reading-actions { margin-top:8px;gap:16px }
+.read-complete {
+  min-height:66px;min-width:min(220px,100%);padding:10px 22px;
+  background:#c5f2ce;color:#17391f;border:2px solid #81cb92;border-radius:24px;
+  font-size:25px;font-weight:800;box-shadow:0 4px #376946;
+}
+.read-complete:active { transform:translateY(3px);box-shadow:0 1px #376946 }

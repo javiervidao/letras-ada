@@ -1,0 +1,30 @@
+{
+  "id": "./",
+  "name": "Ada Mágica · Las guardianas de las letras",
+  "short_name": "Ada Mágica",
+  "description": "Letras, sílabas y palabras con unicornios y magia pop.",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "fullscreen"
+  ],
+  "background_color": "#f1ebff",
+  "theme_color": "#6c48c8",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

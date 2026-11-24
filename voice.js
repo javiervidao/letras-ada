@@ -1,5 +1,6 @@
 'use strict';
 const Guide={active:null,resolve:null,enabled:true,voiceURI:'',speaking:false,lastFinished:0,generation:0,
+ unitText(text){const s=String(text);if(/^(?:ch|ll|rr|qu|gu|[bcdfghjklmnñpqrstvwxyz])[aeiou]$/i.test(s)){const accent={a:'á',e:'é',i:'í',o:'ó',u:'ú'};return s.slice(0,-1)+accent[s.at(-1)]}return s},
  voices(){return ('speechSynthesis'in window?speechSynthesis.getVoices():[]).filter(v=>/^es(?:-|_)/i.test(v.lang))},
  feminine(v){return /Elvira|Helena|Sabina|Laura|Lucia|Lucía|M[oó]nica|Paulina|Dalia|Paloma|Francisca|Lupe|Conchita|Isabella|Camila|Catalina|Penelope|Penélope|Rosa|Ximena|Mia|Mía|female|femenina/i.test(v.name)},
  masculine(v){return /Alvaro|Álvaro|Pablo|Jorge|Diego|Andres|Andrés|Miguel|Carlos|Enrique|Alonso|male\b|masculina/i.test(v.name)&&!this.feminine(v)},
@@ -9,7 +10,7 @@ const Guide={active:null,resolve:null,enabled:true,voiceURI:'',speaking:false,la
  narration(text){if(this.feminine(this.selected()||{name:''}))return text;return text.replace(/juntas/g,'en equipo').replace(/juntos/g,'en equipo').replace(/Soy tu compa[ñn]era de aventura\./g,'La aventura empieza aquí.').replace(/Soy tu unicornio compa[ñn]ero\./g,'El unicornio te acompaña.')},
  cancel(){this.generation++;if(this.resolve){this.resolve(false);this.resolve=null}if('speechSynthesis'in window)speechSynthesis.cancel();this.active=null;this.speaking=false;document.body.classList.remove('guide-speaking')},
  async say(text,{slow=false}={}){if(!this.enabled||!('speechSynthesis'in window)||Mic.active)return false;this.cancel();const ticket=this.generation;await this.ready();if(ticket!==this.generation||!this.enabled||Mic.active)return false;return new Promise(resolve=>{const u=new SpeechSynthesisUtterance(this.narration(text));this.resolve=resolve;this.active=u;u.lang='es-ES';u.rate=slow?.82:.96;u.pitch=1;u.volume=1;u.voice=this.selected();let finished=false;const finish=()=>{if(finished)return;finished=true;clearTimeout(watchdog);if(this.active===u){this.active=null;this.resolve=null;this.speaking=false;this.lastFinished=Date.now();document.body.classList.remove('guide-speaking')}resolve(true)};u.onstart=()=>{this.speaking=true;document.body.classList.add('guide-speaking')};u.onend=finish;u.onerror=finish;const watchdog=setTimeout(finish,Math.max(3500,text.length*95));speechSynthesis.speak(u)})},
- async parts(parts){for(const part of parts){if(Mic.active)return;const finished=await this.say(part,{slow:true});if(!finished)return;const ticket=this.generation;await new Promise(r=>setTimeout(r,170));if(ticket!==this.generation)return}}
+ async parts(parts){for(const part of parts){if(Mic.active)return;const finished=await this.say(this.unitText(part),{slow:true});if(!finished)return;const ticket=this.generation;await new Promise(r=>setTimeout(r,170));if(ticket!==this.generation)return}}
 };
 const Mic={active:false,starting:false,instance:null,timer:null,token:0,lastError:'',lastHeard:'',status:'idle',onStatus:null,onMatch:null,onProblem:null,
  available(){return !!(window.SpeechRecognition||window.webkitSpeechRecognition)},

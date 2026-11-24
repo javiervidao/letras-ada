@@ -2,35 +2,42 @@
 
 // Cada escena deja preparado el lugar donde comienza la siguiente.
 const JOURNEY = [
-  ['La caja de música','Esta noche hay concierto. Al abrir la caja de música, sus luces salen volando. Toca la tapa.','🎁','La caja nos muestra cinco luces perdidas. Vamos a buscarlas con las vocales.','Las luces encienden el sendero del bosque.','🕯️'],
+  ['La caja de música','Esta noche hay concierto, pero la caja de música ha perdido su luz. Toca la caja.','🎁','Alma, la sirena, te llama desde su concha. Toca la concha para escucharla.','Las luces encienden el sendero del bosque. Alma nos espera en el río.','🕯️'],
   ['La linterna del bosque','El unicornio ve un sendero oscuro. Toca la linterna para saber adónde lleva.','🏮','La linterna parpadea. La letra ele puede encenderla.','Vemos un puente sobre el río.','🏮'],
-  ['El puente de madera','Al puente le faltan tablas. Toca una tabla para colocarla.','🪵','Vamos a preparar las demás con la letra pe.','El puente nos lleva hasta un molino.','🌉'],
+  ['El puente de Alma','Al puente le faltan tablas. Toca la tabla que flota junto al unicornio.','🪵','Alma sale del agua para ayudarte. Toca su concha.','Alma empuja la última tabla. Cruzamos el puente y llegamos al molino.','🌉'],
   ['El molino dormido','Las aspas no se mueven. Toca el molino y escucha.','🌬️','El molino necesita nuestra voz para girar.','Al girar, el molino descubre una senda de flores.','🌬️'],
   ['Las flores que susurran','Una flor se mueve. Tócala con cuidado.','🌼','Las flores conocen el camino, pero sus pistas están mezcladas.','Las flores dibujan una flecha hacia la estación.','🌼'],
   ['El tren pequeño','Un tren espera en la estación. Toca la campana.','🚂','El maquinista necesita leer las señales para arrancar.','El tren nos deja junto a un árbol lleno de nidos.','🚂'],
-  ['El nido en la rama','Un pajarito busca su nido. Toca el árbol.','🪺','Hay pistas entre las ramas. Vamos a leerlas.','El pájaro encuentra su nido y señala la casa del río.','🪺'],
+  ['El nido en la rama','Un pajarito busca su nido. Toca el nido.','🪺','Hay pistas entre las ramas. Vamos a leerlas.','El pájaro encuentra su nido y señala la casa del río.','🪺'],
   ['La puerta de la casa','Desde dentro alguien quiere ayudarnos. Toca la puerta.','🚪','La puerta se abre al leer sus señales.','La dueña nos presta una barca para cruzar.','🚪'],
-  ['La barca de papel','La barca está atada al muelle. Toca la cuerda.','🛶','Ahora toca leer las señales del agua para cruzar.','En la otra orilla encontramos una vela caída.','🛶'],
+  ['La barca de Alma','La barca de Alma está atada al muelle. Toca la barca.','🛶','Alma se asoma junto al muelle. Toca su concha.','Alma guía la barca hasta la otra orilla. Allí encontramos una vela caída.','🛶'],
   ['La vela azul','El viento se llevó la vela de un barco. Tócala para recogerla.','⛵','Vamos a separar las pistas de la vela para devolverla.','El barco nos lleva hasta una torre.','⛵'],
-  ['La torre del perro','Un perro ladra desde la torre. Toca la campana de abajo.','🐕','El perro espera que leamos las pistas de doble erre.','El perro baja y nos muestra una huella.','🔔'],
+  ['La torre del perro','Un perro ladra desde la torre. Toca la campana de abajo.','🔔','El perro espera que leamos las pistas de doble erre.','El perro baja y nos muestra una huella.','🔔'],
   ['La huella del loro','Junto a la huella hay una pluma. Tócala.','🪶','Las pistas con erre suave dicen de quién es la pluma.','El loro se posa sobre la roca y nos señala un camino.','🪶'],
   ['El camino de las rocas','Hay una roca que se puede mover. Tócala.','🪨','Las señales con erre inicial nos ayudan a pasar.','Detrás de la roca brilla un farol.','🪨'],
   ['El farol de la foca','Una foca quiere encontrar su farol. Toca la luz.','🦭','Leamos las pistas para llevarle el farol.','La foca nos guía por la costa hasta una casa.','🦭'],
   ['La casa de la costa','La ventana se abre con un golpecito. Tócala.','🏠','Dentro hay pistas para llegar al cumpleaños del castillo.','Desde la ventana vemos dónde preparan la merienda.','🏠'],
   ['La cesta de la merienda','Han dejado una cesta para el viaje. Toca la tapa.','🧺','Vamos a leer las señales de la cesta para repartir la merienda.','Nos dan un mapa para llegar al jardín.','🧺'],
-  ['El jardín del koala','El koala se ha quedado dormido sobre el mapa. Toca la hoja.','🐨','El mapa tiene señales con la letra ka.','El koala despierta y nos enseña un lazo rojo.','🐨'],
+  ['El jardín del koala','El koala se ha quedado dormido sobre el mapa. Toca la hoja.','🍃','El mapa tiene señales con la letra ka.','El koala despierta y nos enseña un lazo rojo.','🐨'],
   ['El lazo rojo','Un lazo rojo marca la entrada del jardín. Tócalo.','🎀','Leamos para saber a qué camino pertenece.','El lazo nos lleva a la jirafa.','🎀'],
-  ['La jirafa y el cartel','La jirafa ve un cartel muy alto. Toca su estrella.','🦒','La jirafa baja el cartel para que puedas leer.','El cartel señala la colina del gato.','🦒'],
-  ['El gato en la colina','El gato está sentado sobre una piedra que brilla. Tócala.','🐈','El gato deja leer las pistas grabadas en la piedra.','La piedra abre el camino a una cueva de gemas.','🐈'],
+  ['La jirafa y el cartel','La jirafa ve un cartel muy alto. Toca su estrella.','⭐','La jirafa baja el cartel para que puedas leer.','El cartel señala la colina del gato.','🦒'],
+  ['El gato en la colina','El gato está sentado sobre una piedra que brilla. Tócala.','🪨','El gato deja leer las pistas grabadas en la piedra.','La piedra abre el camino a una cueva de gemas.','🐈'],
   ['La cueva brillante','Una gema ilumina la entrada. Tócala.','💎','Las pistas de ge y gi nos dicen por dónde salir.','Al salir, vemos una montaña que parece de colores.','💎'],
-  ['La montaña de colores','Hay una bandera a media altura. Tócala para desplegarla.','🏔️','La bandera nos enseña las señales para subir.','Desde arriba vemos el coche de las guardianas.','🏔️'],
-  ['El coche de las guardianas','El coche no sabe por dónde ir. Toca el volante.','🚗','Vamos a leer sus señales para ayudarle.','El coche nos deja junto a un yoyo en la plaza.','🚗'],
+  ['La montaña de colores','Hay una bandera a media altura. Tócala para desplegarla.','🚩','La bandera nos enseña las señales para subir.','Desde arriba vemos el coche de las guardianas.','🏔️'],
+  ['El coche de las guardianas','El coche no sabe por dónde ir. Toca el coche.','🚗','Vamos a leer sus señales para ayudarle.','El coche nos deja junto a un yoyo en la plaza.','🚗'],
   ['El yoyo de la plaza','El yoyo se ha enredado. Tócalo para desenrollarlo.','🪀','En el hilo aparecen pistas que podemos leer.','El yoyo señala una llave debajo del banco.','🪀'],
   ['La llave del escenario','La llave brilla bajo el banco. Tócala.','🔑','Leamos las señales para encontrar la puerta que abre.','La puerta se abre y vemos el escenario.','🔑'],
-  ['El hada de las luces','El escenario está a oscuras. Toca la estrella del hada.','🧚','La hache se escribe aunque no suene. Leamos las pistas del hada.','Las luces encienden el camino del taxi.','🧚'],
-  ['El taxi de los músicos','El taxi trae a los músicos. Toca la puerta para avisarles.','🚕','Necesitan leer las señales con equis para llegar al escenario.','Los músicos llegan con la última pista.','🚕'],
-  ['El concierto de Ada','Todo el equipo está listo. Toca el micrófono para empezar.','🎤','Queda la última misión. Descubre la uve doble y devuelve el sonido a la caja.','¡La caja vuelve a sonar! El unicornio y las guardianas tocan contigo. Gracias por traer la música de vuelta, Ada.','🏆']
+  ['El hada de las luces','El escenario está a oscuras. Toca la estrella del hada.','⭐','La hache se escribe aunque no suene. Leamos las pistas del hada.','Las luces encienden el camino del taxi.','🧚'],
+  ['El taxi de los músicos','El taxi trae a los músicos. Toca el taxi para avisarles.','🚕','Necesitan leer las señales con equis para llegar al escenario.','Los músicos llegan con la última pista.','🚕'],
+  ['El concierto de Ada','Todo el equipo está listo. Toca el micrófono para empezar.','🎤','Alma trae la última luz en su concha. Tócala.','¡La caja vuelve a sonar! Alma canta y el unicornio y las guardianas tocan contigo. Gracias por traer la música de vuelta, Ada.','🏆']
 ];
+
+const ALMA_LINES = {
+  0: '¡Hola, Ada! Soy Alma. Vi una luz caer en el río. Si encuentras las vocales, podremos encender el camino.',
+  2: '¡Aquí estoy! Yo sujeto las tablas desde el agua. Lee las pistas con pe y podremos cruzar.',
+  8: 'Sube a mi barca, Ada. Tú lees las señales y yo te llevo por el río.',
+  27: '¡Lo hemos conseguido, Ada! Solo falta la última misión. Cuando vuelvas, cantaré contigo.'
+};
 
 function journeyUnit(stage) {
   const unit = stages[stage].unit;
@@ -83,19 +90,22 @@ function storyChoice() {
   const stage = state.stage;
   const episode = JOURNEY[stage];
   const progress = journeyProgress(stage);
+  const alma = ALMA_LINES[stage];
+  const canChoose = () => progress.opened && (!alma || progress.metAlma);
   updateScene();
   screen.innerHTML = `<section class="mission-hub story-chapter journey-scene">${fireflies()}
     <h1>${episode[0]}</h1>
     <div class="journey-letter">${journeyUnit(stage)}</div>
-    <button id="story-object" class="journey-object" aria-label="Tocar el objeto de la historia">${episode[2]}</button>
+    <button id="story-object" class="journey-object" aria-label="Tocar el objeto de la historia">${episode[2]}<span class="story-touch" aria-hidden="true">👆</span></button>
     <button id="story-hear" class="story-mascot" aria-label="Escuchar la escena"><img src="assets/unicorn.png" alt=""><span>🔊</span></button>
-    <div id="story-paths" class="story-branches" ${progress.opened ? '' : 'hidden'}>
+    ${alma ? `<button id="story-alma" class="story-alma" aria-label="Escuchar a Alma, la sirena" ${progress.opened ? '' : 'hidden'}><img src="assets/alma.png" alt="" onerror="this.hidden=true"><span>🐚 🔊</span></button>` : ''}
+    <div id="story-paths" class="story-branches" ${canChoose() ? '' : 'hidden'}>
       <button data-branch="0" aria-label="Camino de las pistas"><span>🔎</span><small>Pistas</small></button>
       <button data-branch="1" aria-label="Camino musical"><span>🎵</span><small>Música</small></button>
     </div>
     <button id="trophy-room" class="round-tool" aria-label="Ver mis trofeos">🏆</button>
   </section>`;
-  const hear = () => tell(progress.opened ? episode[3] + ' Elige las pistas o la música.' : episode[1], '🦄');
+  const hear = () => tell(canChoose() ? 'Elige las pistas o la música.' : progress.opened ? episode[3] : episode[1], '🦄');
   $('#story-hear').onclick = () => { gesture(); hear(); };
   $('#trophy-room').onclick = trophyRoom;
   $('#story-object').onclick = () => {
@@ -109,8 +119,23 @@ function storyChoice() {
     chime();
     progress.opened = true;
     save();
-    $('#story-paths').hidden = false;
-    hear();
+    if (alma) $('#story-alma').hidden = false;
+    if (alma && !progress.metAlma) object.hidden = true;
+    $('#story-paths').hidden = !canChoose();
+    tell(episode[3] + (alma ? '' : ' Elige las pistas o la música.'), '🦄');
+  };
+  if (alma) $('#story-alma').onclick = () => {
+    gesture();
+    const button = $('#story-alma');
+    button.classList.remove('alma-sings');
+    void button.offsetWidth;
+    button.classList.add('alma-sings');
+    progress.metAlma = true;
+    save();
+    sparks();
+    const token = flow;
+    const revealPaths = () => { if (token === flow) $('#story-paths').hidden = false; };
+    Promise.race([tell(alma, '🐚'), sleep(3300)]).then(revealPaths);
   };
   screen.querySelectorAll('[data-branch]').forEach(button => button.onclick = async () => {
     if (advancing) return;

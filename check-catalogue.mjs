@@ -6,6 +6,14 @@ assert.equal(run("CHILD_WORDS.find(w=>w.text==='mesa').emoji"),null,'Mesa must n
 for(let stage=0;stage<28;stage++){const target=run(`targetsForStage(${stage}).join('|')`);for(const forbidden of ['um','im','om','up','op','ep','ap','ip'])assert.ok(!target.split('|').includes(forbidden),'Fabricated inverse '+forbidden+' at '+stage);}
 let generated=0;for(let stage=0;stage<28;stage++)for(const difficulty of [0,1,2])for(const simple of [true,false]){run(`var s={stage:${stage},difficulty:${difficulty},maxSyllables:2,simpleSyllables:${simple},missions:0,step:0,voiceAllowed:false,history:[],introduced:[]};`);for(let i=0;i<60;i++){run(`s.step=${i%5};s.missions=${Math.floor(i/5)};var q=newChallenge(s)`);assert.ok(run("q.type!=='read'"),'Microphone is optional');assert.ok(run('!q.word||q.word.parts.length<=2'),'Three-syllable word leaked into two-syllable mode');assert.ok(run("q.type!=='picture'||q.options.every(o=>CHILD_WORDS.find(w=>w.text===o.text).parts.length<=2)"),'A distractor leaked above the syllable cap');assert.ok(run("q.type!=='picture'||q.options.every(o=>PICTURE_REVIEW[o.text]?.[0]===o.emoji)"),'Wrong picture binding');assert.ok(run('!q.word||q.word.parts.join(\'\')===q.word.text'));generated++;}}
 assert.equal(run("eligibleChildWord(CHILD_WORDS.find(w=>w.text==='tomate'),{stage:5,difficulty:2,maxSyllables:2,simpleSyllables:true})"),false);assert.equal(run("eligibleChildWord(CHILD_WORDS.find(w=>w.text==='tomate'),{stage:5,difficulty:2,maxSyllables:3,simpleSyllables:true})"),true);
+assert.equal(run("newChallenge({stage:0,step:0,missions:0,branch:0,difficulty:0}).type"),'listen');
+assert.equal(run("newChallenge({stage:0,step:0,missions:0,branch:1,difficulty:0}).type"),'twins');
+assert.ok(run(`(() => {
+ const session = {stage:3,step:1,missions:0,branch:0,difficulty:1,maxSyllables:2};
+ const challenge = Array.from({length:30}, () => newChallenge(session)).find(q => q.variant === "missing");
+ return challenge?.variant === 'missing' && challenge.options.length === 3 &&
+   challenge.picked.length === 1 && restoreChallenge(challenge,session)?.variant === 'missing';
+})()`),'Missing syllable offers a genuine choice and survives reload');
 assert.equal(run("restoreChallenge({type:'listen',answer:'um',options:['um','mi']},{stage:3,difficulty:2,maxSyllables:2})"),null);
 assert.equal(run("restoreChallenge({type:'build',answer:'tomate',word:{text:'tomate'},options:[{id:0},{id:1},{id:2}]},{stage:5,difficulty:2,maxSyllables:2,simpleSyllables:true})"),null);
 assert.equal(run("restoreChallenge({type:'picture',answer:'pipa',word:{text:'pipa'},options:[{text:'pipa',emoji:'🔍'},{text:'mesa',emoji:'🪑'}]},{stage:5,difficulty:2,maxSyllables:2})"),null);

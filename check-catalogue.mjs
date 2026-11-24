@@ -1,6 +1,6 @@
 import fs from 'node:fs';import vm from 'node:vm';import assert from 'node:assert/strict';
 const WEB=fs.existsSync('dist/index.html')?'dist/':'';
-const c={console,Math,Date};vm.createContext(c);for(const f of ['curriculum.js','learning.js','catalogue.js'])vm.runInContext(fs.readFileSync(WEB+''+f,'utf8'),c);const run=s=>vm.runInContext(s,c);
+const c={console,Math,Date};vm.createContext(c);for(const f of ['curriculum.js','learning.js','catalogue.js','journey.js'])vm.runInContext(fs.readFileSync(WEB+''+f,'utf8'),c);const run=s=>vm.runInContext(s,c);
 for(const word of ['pipa','puma','chupete','falda','cuna','pozo','kilo','mora','paleta'])assert.equal(run(`CHILD_WORDS.some(w=>w.text===${JSON.stringify(word)})`),false,word+' must not keep a misleading picture');
 assert.equal(run("CHILD_WORDS.find(w=>w.text==='mesa').emoji"),null,'Mesa must never show a chair');assert.equal(run("CHILD_WORDS.find(w=>w.text==='silla').emoji"),'🪑');assert.equal(run("CHILD_WORDS.find(w=>w.text==='lupa').emoji"),'🔍');
 for(let stage=0;stage<28;stage++){const target=run(`targetsForStage(${stage}).join('|')`);for(const forbidden of ['um','im','om','up','op','ep','ap','ip'])assert.ok(!target.split('|').includes(forbidden),'Fabricated inverse '+forbidden+' at '+stage);}
@@ -8,6 +8,12 @@ let generated=0;for(let stage=0;stage<28;stage++)for(const difficulty of [0,1,2]
 assert.equal(run("eligibleChildWord(CHILD_WORDS.find(w=>w.text==='tomate'),{stage:5,difficulty:2,maxSyllables:2,simpleSyllables:true})"),false);assert.equal(run("eligibleChildWord(CHILD_WORDS.find(w=>w.text==='tomate'),{stage:5,difficulty:2,maxSyllables:3,simpleSyllables:true})"),true);
 assert.equal(run("newChallenge({stage:0,step:0,missions:0,branch:0,difficulty:0}).type"),'listen');
 assert.equal(run("newChallenge({stage:0,step:0,missions:0,branch:1,difficulty:0}).type"),'twins');
+assert.equal(run('JOURNEY.length'),run('stages.length'),'Every curriculum stage has a scripted scene');
+assert.equal(run(`(() => {
+ const s={stage:27,step:4,stars:0,missions:9,difficulty:0,branch:1,mastery:{27:{independent:11,assisted:0,wrong:0,targets:['kiwi'],kinds:['listen','build','search']}},session:{type:'listen',answer:'kiwi',attempts:0}};
+ creditChallenge(s);
+ return s.stage===27 && s.finishedScene===27 && s.journey[27].learned && s.journey[27].routes.includes(1);
+})()`),true,'The final letter unlocks the concert instead of looping');
 assert.ok(run(`(() => {
  const session = {stage:3,step:1,missions:0,branch:0,difficulty:1,maxSyllables:2};
  const challenge = Array.from({length:30}, () => newChallenge(session)).find(q => q.variant === "missing");

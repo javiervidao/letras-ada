@@ -2,15 +2,15 @@
 
 // Cada escena deja preparado el lugar donde comienza la siguiente.
 const JOURNEY = [
-  ['La caja de música','Esta noche hay concierto, pero la caja de música ha perdido su luz. Toca la caja.','🎁','Alma, la sirena, te llama desde su concha. Toca la concha para escucharla.','Las luces encienden el sendero del bosque. Alma nos espera en el río.','🕯️'],
+  ['La caja de música','Esta noche hay concierto, pero la caja de música ha perdido su luz. Toca la caja.','🎁','Ariel, la sirena, te llama desde su concha. Toca la concha para escucharla.','Las luces encienden el sendero del bosque. Ariel nos espera en el río.','🕯️'],
   ['La linterna del bosque','El unicornio ve un sendero oscuro. Toca la linterna para saber adónde lleva.','🏮','La linterna parpadea. La letra ele puede encenderla.','Vemos un puente sobre el río.','🏮'],
-  ['El puente de Alma','Al puente le faltan tablas. Toca la tabla que flota junto al unicornio.','🪵','Alma sale del agua para ayudarte. Toca su concha.','Alma empuja la última tabla. Cruzamos el puente y llegamos al molino.','🌉'],
+  ['El puente de Ariel','Al puente le faltan tablas. Toca la tabla que flota junto al unicornio.','🪵','Ariel sale del agua para ayudarte. Toca su concha.','Ariel empuja la última tabla. Cruzamos el puente y llegamos al molino.','🌉'],
   ['El molino dormido','Las aspas no se mueven. Toca el molino y escucha.','🌬️','El molino necesita nuestra voz para girar.','Al girar, el molino descubre una senda de flores.','🌬️'],
   ['Las flores que susurran','Una flor se mueve. Tócala con cuidado.','🌼','Las flores conocen el camino, pero sus pistas están mezcladas.','Las flores dibujan una flecha hacia la estación.','🌼'],
   ['El tren pequeño','Un tren espera en la estación. Toca la campana.','🚂','El maquinista necesita leer las señales para arrancar.','El tren nos deja junto a un árbol lleno de nidos.','🚂'],
   ['El nido en la rama','Un pajarito busca su nido. Toca el nido.','🪺','Hay pistas entre las ramas. Vamos a leerlas.','El pájaro encuentra su nido y señala la casa del río.','🪺'],
   ['La puerta de la casa','Desde dentro alguien quiere ayudarnos. Toca la puerta.','🚪','La puerta se abre al leer sus señales.','La dueña nos presta una barca para cruzar.','🚪'],
-  ['La barca de Alma','La barca de Alma está atada al muelle. Toca la barca.','🛶','Alma se asoma junto al muelle. Toca su concha.','Alma guía la barca hasta la otra orilla. Allí encontramos una vela caída.','🛶'],
+  ['La barca de Ariel','La barca de Ariel está atada al muelle. Toca la barca.','🛶','Ariel se asoma junto al muelle. Toca su concha.','Ariel guía la barca hasta la otra orilla. Allí encontramos una vela caída.','🛶'],
   ['La vela azul','El viento se llevó la vela de un barco. Tócala para recogerla.','⛵','Vamos a separar las pistas de la vela para devolverla.','El barco nos lleva hasta una torre.','⛵'],
   ['La torre del perro','Un perro ladra desde la torre. Toca la campana de abajo.','🔔','El perro espera que leamos las pistas de doble erre.','El perro baja y nos muestra una huella.','🔔'],
   ['La huella del loro','Junto a la huella hay una pluma. Tócala.','🪶','Las pistas con erre suave dicen de quién es la pluma.','El loro se posa sobre la roca y nos señala un camino.','🪶'],
@@ -29,11 +29,11 @@ const JOURNEY = [
   ['La llave del escenario','La llave brilla bajo el banco. Tócala.','🔑','Leamos las señales para encontrar la puerta que abre.','La puerta se abre y vemos el escenario.','🔑'],
   ['El hada de las luces','El escenario está a oscuras. Toca la estrella del hada.','⭐','La hache se escribe aunque no suene. Leamos las pistas del hada.','Las luces encienden el camino del taxi.','🧚'],
   ['El taxi de los músicos','El taxi trae a los músicos. Toca el taxi para avisarles.','🚕','Necesitan leer las señales con equis para llegar al escenario.','Los músicos llegan con la última pista.','🚕'],
-  ['El concierto de Ada','Todo el equipo está listo. Toca el micrófono para empezar.','🎤','Alma trae la última luz en su concha. Tócala.','¡La caja vuelve a sonar! Alma canta y el unicornio y las guardianas tocan contigo. Gracias por traer la música de vuelta, Ada.','🏆']
+  ['El concierto de Ada','Todo el equipo está listo. Toca el micrófono para empezar.','🎤','Ariel trae la última luz en su concha. Tócala.','¡La caja vuelve a sonar! Ariel canta y el unicornio y las guardianas tocan contigo. Gracias por traer la música de vuelta, Ada.','🏆']
 ];
 
 const ALMA_LINES = {
-  0: '¡Hola, Ada! Soy Alma. Vi una luz caer en el río. Si encuentras las vocales, podremos encender el camino.',
+  0: '¡Hola, Ada! Soy Ariel. Vi una luz caer en el río. Si encuentras las vocales, podremos encender el camino.',
   2: '¡Aquí estoy! Yo sujeto las tablas desde el agua. Lee las pistas con pe y podremos cruzar.',
   8: 'Sube a mi barca, Ada. Tú lees las señales y yo te llevo por el río.',
   27: '¡Lo hemos conseguido, Ada! Solo falta la última misión. Cuando vuelvas, cantaré contigo.'
@@ -98,7 +98,7 @@ function storyChoice() {
     <div class="journey-letter">${journeyUnit(stage)}</div>
     <button id="story-object" class="journey-object" aria-label="Tocar el objeto de la historia">${episode[2]}<span class="story-touch" aria-hidden="true">👆</span></button>
     <button id="story-hear" class="story-mascot" aria-label="Escuchar la escena"><img src="assets/unicorn.png" alt=""><span>🔊</span></button>
-    ${alma ? `<button id="story-alma" class="story-alma" aria-label="Escuchar a Alma, la sirena" ${progress.opened ? '' : 'hidden'}><img src="assets/alma.png" alt="" onerror="this.hidden=true"><span>🐚 🔊</span></button>` : ''}
+    ${alma ? `<button id="story-alma" class="story-alma" aria-label="Escuchar a Ariel, la sirena" ${progress.opened ? '' : 'hidden'}><img src="assets/alma.png" alt="" onerror="this.hidden=true"><span>🐚 🔊</span></button>` : ''}
     <div id="story-paths" class="story-branches" ${canChoose() ? '' : 'hidden'}>
       <button data-branch="0" aria-label="Camino de las pistas"><span>🔎</span><small>Pistas</small></button>
       <button data-branch="1" aria-label="Camino musical"><span>🎵</span><small>Música</small></button>

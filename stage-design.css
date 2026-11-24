@@ -1,0 +1,69 @@
+/* The reading board stays quiet while the surrounding stage carries the motion. */
+body[data-route="game"]:not(.front-screen) {
+  background-image: linear-gradient(115deg,#100b39a8,#29124f43 50%,#1010319c),url('assets/realm.png');
+}
+body[data-route="game"]:not(.front-screen) #progress { display:none }
+body[data-route="game"] .adventure { grid-template-columns:minmax(0,36%) minmax(0,64%) }
+body[data-route="game"] .character-stage::after {
+  content:"";position:absolute;inset:auto 8% 12% 13%;height:85px;border-radius:50%;
+  background:radial-gradient(ellipse,#e6b8ff91 0%,#ab63ff43 45%,transparent 72%);
+  pointer-events:none;z-index:-1;
+}
+.challenge {
+  --accent:#7240ae;--tint:#f1e6ff;--soft:#fbf6ff;
+  position:relative;min-height:0;isolation:isolate;overflow:hidden;padding:clamp(15px,2.2vw,30px);
+  border:1px solid #fff6;border-radius:32px;color:#fff6ed;
+  background:linear-gradient(152deg,#342056,#190f32 78%);
+  box-shadow:0 24px 65px #10082388, inset 0 1px #fff4;
+}
+.challenge[data-kind="echo"],.challenge[data-kind="listen"] { --accent:#5a45b4;--tint:#e9e5ff;--soft:#f7f5ff }
+.challenge[data-kind="build"],.challenge[data-kind="read"] { --accent:#a33570;--tint:#f9e3f0;--soft:#fff5fa }
+.challenge[data-kind="search"],.challenge[data-kind="picture"],.challenge[data-kind="twins"] { --accent:#226779;--tint:#dcf4f4;--soft:#f2fbfa }
+.challenge .task-top { gap:12px;margin-bottom:15px }
+.challenge .task-voice,.challenge .pause-button {
+  color:#fff;background:#ffffff16;border:1px solid #ffffff30;border-radius:17px;
+}
+.task-voice strong { font-size:clamp(12px,1.5vw,17px);font-weight:800 }
+.challenge .mini-progress { display:flex;align-items:center;gap:8px }
+.challenge .mini-progress i {
+  display:block;width:11px;height:11px;min-width:11px;border:1px solid #d6bdf4;
+  border-radius:3px;background:#ffffff20;transform:rotate(45deg);
+}
+.challenge .mini-progress i.filled { background:#ffdf81;border-color:#ffdf81;box-shadow:0 0 9px #f3cb71 }
+.challenge .task-instruction { color:#f0dfff;min-height:28px;margin:0 0 9px;font-weight:750 }
+.challenge #exercise {
+  display:grid;align-content:center;min-height:240px;padding:clamp(10px,2vw,22px);
+  border:1px solid #fff;border-radius:24px;color:#302044;min-width:0;
+  background:radial-gradient(ellipse at 50% 0%,var(--tint),transparent 76%),var(--soft);
+  box-shadow:inset 0 0 0 4px #fff8;
+}
+.challenge .echo-note {
+  display:grid;grid-template-rows:auto auto;justify-items:center;align-content:center;
+  min-width:clamp(58px,10vw,100px);min-height:88px;padding:8px 12px;
+  border-radius:16px;background:var(--tint);border:2px solid #8061a140;
+}
+.echo-syllable { display:inline-block;white-space:nowrap;line-height:1.1 }
+.challenge .echo-note.echo-next { background:#ffefbf;border-color:#ad832a }
+.challenge .echo-note.echo-done { background:#d8f1db;border-color:#76ab83 }
+.challenge .answer {
+  background:#fff;color:#35224a;border:2px solid #60457744;border-bottom:5px solid #71558f61;
+  border-radius:18px;transition:transform .15s,background .15s;
+}
+.challenge .answer:active { transform:translateY(3px);background:var(--tint) }
+.challenge .answer.correct { background:#c6f0d6;border-color:#44845d }
+.challenge .word-target,.challenge .round-tool { color:#45295e }
+.challenge .support-row { margin-top:7px;padding-top:8px;border-color:#ffffff26 }
+.challenge .learning-help { background:#fff1d0;color:#43254e;font-weight:800 }
+.challenge .feedback-picture { color:#ffe4a2 }
+@media(max-width:760px) {
+  body[data-route="game"] .adventure { grid-template-columns:minmax(0,1fr) }
+  body[data-route="game"] .character-stage { height:156px;min-height:156px }
+  body[data-route="game"] #actor { height:152px;width:130px }
+  body[data-route="game"] .character-tools { bottom:0 }
+  .challenge { border-radius:24px }
+  .challenge #exercise { min-height:190px }
+  .challenge .echo-note { min-height:68px }
+  .challenge .echo-pattern { margin:8px 0 }
+}
+@media(max-width:360px) { .task-voice strong { display:none } .challenge .task-top { gap:5px } }
+@media(prefers-reduced-motion:reduce){.challenge .answer{transition:none}}

@@ -1,0 +1,26 @@
+'use strict';
+const Guide={active:null,resolve:null,enabled:true,voiceURI:'',speaking:false,lastFinished:0,
+ voices(){return ('speechSynthesis'in window?speechSynthesis.getVoices():[]).filter(v=>v.lang.startsWith('es'))},
+ selected(){return this.voices().sort((a,b)=>this.score(b)-this.score(a))[0]||null},
+ score(v){return (v.voiceURI===this.voiceURI?1000:0)+(v.lang==='es-ES'?100:0)+(/premium|enhanced|mejorada|natural|neural/i.test(v.name)?80:0)+(/Paulina|Monica|Mónica|Google español|Elvira/i.test(v.name)?30:0)-(/eloquence|reed|rocko|whisper|zarvox|bubbles|bells|trinoids|bad news|organ|albert|cellos|jester|superstar/i.test(v.name)?500:0)},
+ cancel(){if(this.resolve){this.resolve(false);this.resolve=null}if('speechSynthesis'in window)speechSynthesis.cancel();this.active=null;this.speaking=false;document.body.classList.remove('guide-speaking')},
+ say(text,{slow=false}={}){if(!this.enabled||!('speechSynthesis'in window)||Mic.active)return Promise.resolve(false);this.cancel();return new Promise(resolve=>{const u=new SpeechSynthesisUtterance(text);this.resolve=resolve;this.active=u;u.lang='es-ES';u.rate=slow?.86:.98;u.pitch=1;u.volume=1;u.voice=this.selected();let finished=false;const finish=()=>{if(finished)return;finished=true;clearTimeout(watchdog);if(this.active===u){this.active=null;this.resolve=null;this.speaking=false;this.lastFinished=Date.now();document.body.classList.remove('guide-speaking')}resolve(true)};u.onstart=()=>{this.speaking=true;document.body.classList.add('guide-speaking')};u.onend=finish;u.onerror=finish;const watchdog=setTimeout(finish,Math.max(3500,text.length*95));speechSynthesis.speak(u)})},
+ async parts(parts){for(const part of parts){if(Mic.active)return;await this.say(part,{slow:true});await new Promise(r=>setTimeout(r,170))}}
+};
+const Mic={active:false,starting:false,instance:null,timer:null,token:0,lastError:'',lastHeard:'',status:'idle',onStatus:null,onMatch:null,onProblem:null,
+ available(){return !!(window.SpeechRecognition||window.webkitSpeechRecognition)},
+ setStatus(status){this.status=status;if(this.onStatus)this.onStatus(status)},
+ stop(){this.token++;clearTimeout(this.timer);this.active=false;this.starting=false;if(this.instance){const r=this.instance;this.instance=null;r.onresult=r.onerror=r.onend=r.onstart=null;try{r.abort()}catch{}}this.setStatus('idle')},
+ start(answer){if(this.active||this.starting){this.stop();return}if(!this.available()){this.problem('unsupported');return}if(!window.isSecureContext){this.problem('insecure');return}Guide.cancel();const token=++this.token;this.starting=true;this.lastError='';this.lastHeard='';this.setStatus('starting');const launch=()=>{if(token!==this.token)return;const Constructor=window.SpeechRecognition||window.webkitSpeechRecognition;const r=new Constructor();this.instance=r;r.lang='es-ES';r.continuous=false;r.interimResults=true;r.maxAlternatives=5;let hadFinal=false,failed=false,matched=false;
+ const complete=(error)=>{if(token!==this.token)return;clearTimeout(this.timer);this.active=false;this.starting=false;this.instance=null;this.setStatus('idle');if(error)this.problem(error)};
+ r.onstart=()=>{if(token!==this.token){try{r.abort()}catch{}return}this.starting=false;this.active=true;this.setStatus('listening')};
+ r.onspeechstart=()=>{if(token===this.token)this.setStatus('hearing')};r.onsoundstart=()=>{if(token===this.token&&this.active)this.setStatus('listening')};
+ r.onresult=event=>{if(token!==this.token||matched)return;for(let i=event.resultIndex||0;i<event.results.length;i++){const result=event.results[i];if(!result.isFinal)continue;hadFinal=true;const candidates=Array.from({length:result.length},(_,j)=>result[j].transcript);this.lastHeard=candidates[0]||'';if(candidates.some(t=>recognizedMatches(t,answer))){matched=true;this.stop();if(this.onMatch)this.onMatch();return}}};
+ r.onerror=event=>{if(token!==this.token||matched)return;failed=true;const error=event.error==='aborted'?'interrupted':event.error;complete(error)};
+ r.onend=()=>{if(token!==this.token||matched||failed)return;complete(hadFinal?'unrecognized':'no-speech')};
+ try{r.start();this.timer=setTimeout(()=>{if(token!==this.token)return;try{r.abort()}catch{}this.stop();this.problem('timeout')},18000)}catch(error){complete(error.name==='NotAllowedError'?'not-allowed':'start-failed')}
+ }; // Safari needs the speech output to release its audio session before recognition begins.
+ this.timer=setTimeout(launch,320)},
+ problem(code){this.lastError=code;this.setStatus('error');if(this.onProblem)this.onProblem(code)},
+ message(code){return ({'no-speech':'No te he oído. Prueba otra vez.','unrecognized':'No lo he entendido bien. Vamos despacito.','timeout':'No te he oído. Toca el micro y prueba otra vez.','network':'El micro necesita conexión. Podemos jugar con dibujos.','not-allowed':'Necesitamos que un mayor active el micrófono.','service-not-allowed':'El iPad no permite reconocer la voz. Pide ayuda a un mayor.','audio-capture':'No llega sonido al micrófono. Pide ayuda a un mayor.','language-not-supported':'Este navegador no tiene reconocimiento en español.','unsupported':'Aquí no puedo escucharte. Podemos jugar con dibujos.','insecure':'Abre Ada con su dirección segura para usar el micro.'})[code]||'El micro no está listo. Puedes repetir o jugar con dibujos.'}
+};

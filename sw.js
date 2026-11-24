@@ -1,4 +1,4 @@
-const CACHE='ada-guardianas-v6';
+const CACHE='ada-guardianas-v7';
 const CORE=['./','./index.html','./adventure.css','./characters.css','./polish.css','./experience.css','./curriculum.js','./learning.js','./catalogue.js','./voice.js','./avatar.js','./rig.js','./front.js','./engine.js','./manifest.webmanifest','./icon.svg','./icon-192.png','./icon-512.png','./apple-touch-icon.png','./assets/realm.png','./assets/unicorn.png','./assets/rumi.png','./assets/mira.png','./assets/zoey.png'];
 const COSTUMES=['rumi','mira','zoey'].flatMap(n=>['star','wings','concert'].map(l=>'./assets/'+n+'-'+l+'.png'));
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)));self.skipWaiting()});

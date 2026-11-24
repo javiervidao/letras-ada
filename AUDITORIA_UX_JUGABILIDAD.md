@@ -43,6 +43,18 @@ Los pictogramas del sistema pueden variar. Para validar el reconocimiento real, 
 
 ## Prueba observacional pendiente con Ada
 
+### Recorrido ya comprobado en Chrome
+
+- Misión de cinco retos terminada enteramente sin micrófono; pantalla final con elección explícita y sin arranque automático de la siguiente.
+- Entrega y colocación del vestuario de las estrellas al llegar a tres estrellas.
+- Malla 2D activa con fotogramas renderizados en el personaje y el vestuario equipado.
+- Ajustes de P, dos sílabas y estructura simple; escucha con opciones «pa/pu».
+- Construcción de «pe·lo» sin un dibujo semántico inventado. Recarga tras colocar «pe»: la partida recuperó «pe» colocado, «lo» pendiente y las mismas estrellas.
+- Reto de imagen «lupa» con una lupa y una ola como opciones; no se recuperó la asociación falsa de «pipa». Las opciones, la palabra y su modelo coincidían en la web publicada.
+- La revisión manual detectó y corrigió dos detalles adicionales: mantener las cinco notas visibles al cerrar una misión y limpiar el cierre pendiente al cambiar la letra en ajustes.
+
+### Prueba pendiente en su dispositivo
+
 1. Abrir el juego sin explicar los botones y observar si encuentra cómo empezar y elegir guerrera.
 2. Completar una misión de L/P/M, con máximo dos sílabas y sin micrófono. Observar dónde pide ayuda o toca por ensayo.
 3. Nombrar los dibujos presentes antes de leer. Retirar cualquier dibujo que no reconozca.

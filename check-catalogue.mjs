@@ -4,23 +4,35 @@ const c={console,Math,Date};vm.createContext(c);for(const f of ['curriculum.js',
 for(const word of ['pipa','puma','chupete','falda','cuna','pozo','kilo','mora','paleta'])assert.equal(run(`CHILD_WORDS.some(w=>w.text===${JSON.stringify(word)})`),false,word+' must not keep a misleading picture');
 assert.equal(run("CHILD_WORDS.find(w=>w.text==='mesa').emoji"),null,'Mesa must never show a chair');assert.equal(run("CHILD_WORDS.find(w=>w.text==='silla').emoji"),'🪑');assert.equal(run("CHILD_WORDS.find(w=>w.text==='lupa').emoji"),'🔍');
 for(let stage=0;stage<28;stage++){const target=run(`targetsForStage(${stage}).join('|')`);for(const forbidden of ['um','im','om','up','op','ep','ap','ip'])assert.ok(!target.split('|').includes(forbidden),'Fabricated inverse '+forbidden+' at '+stage);}
-let generated=0;for(let stage=0;stage<28;stage++)for(const difficulty of [0,1,2])for(const simple of [true,false]){run(`var s={stage:${stage},difficulty:${difficulty},maxSyllables:2,simpleSyllables:${simple},missions:0,step:0,voiceAllowed:false,history:[],introduced:[]};`);for(let i=0;i<60;i++){run(`s.step=${i%5};s.missions=${Math.floor(i/5)};var q=newChallenge(s)`);assert.equal(run('q.type==="read"'),stage>0&&[0,2,4].includes(i%5),'Three word-reading rounds without microphone in every consonant mission');assert.ok(run('!q.word||q.word.parts.length<=2'),'Three-syllable word leaked into two-syllable mode');assert.ok(run("q.type!=='picture'||q.options.every(o=>CHILD_WORDS.find(w=>w.text===o.text).parts.length<=2)"),'A distractor leaked above the syllable cap');assert.ok(run("q.type!=='picture'||q.options.every(o=>PICTURE_REVIEW[o.text]?.[0]===o.emoji)"),'Wrong picture binding');assert.ok(run('!q.word||q.word.parts.join(\'\')===q.word.text'));generated++;}}
+let generated=0;for(let stage=0;stage<28;stage++)for(const difficulty of [0,1,2])for(const simple of [true,false]){run(`var s={stage:${stage},difficulty:${difficulty},maxSyllables:2,simpleSyllables:${simple},missions:0,step:0,voiceAllowed:false,history:[],introduced:[]};`);for(let i=0;i<60;i++){run(`s.step=${i%5};s.missions=${Math.floor(i/5)};var q=newChallenge(s)`);assert.equal(run('q.type==="read"'),stage>0&&[[0,2,4],[0,1,3],[0,2,3]][Math.floor(i/5)%3].includes(i%5),'Three word-reading rounds without microphone in every consonant mission');assert.ok(run('!q.word||q.word.parts.length<=2'),'Three-syllable word leaked into two-syllable mode');assert.ok(run("q.type!=='picture'||q.options.every(o=>CHILD_WORDS.find(w=>w.text===o.text).parts.length<=2)"),'A distractor leaked above the syllable cap');assert.ok(run("q.type!=='picture'||q.options.every(o=>PICTURE_REVIEW[o.text]?.[0]===o.emoji)"),'Wrong picture binding');assert.ok(run('!q.word||q.word.parts.join(\'\')===q.word.text'));generated++;}}
 assert.equal(run("eligibleChildWord(CHILD_WORDS.find(w=>w.text==='tomate'),{stage:5,difficulty:2,maxSyllables:2,simpleSyllables:true})"),false);assert.equal(run("eligibleChildWord(CHILD_WORDS.find(w=>w.text==='tomate'),{stage:5,difficulty:2,maxSyllables:3,simpleSyllables:true})"),true);
 assert.equal(run("newChallenge({stage:0,step:0,missions:0,branch:0,difficulty:0}).type"),'listen');
 assert.equal(run("newChallenge({stage:0,step:0,missions:0,branch:1,difficulty:0}).type"),'twins');
 assert.equal(run('JOURNEY.length'),run('stages.length'),'Every curriculum stage has a scripted scene');
+for(let stage=0;stage<28;stage++)for(let missions=0;missions<3;missions++)
+ assert.ok(run(`chapterScript(${stage},{missions:${missions}}).every(beat=>typeof beat.line==='string' && beat.line.length>0)`));
+assert.ok(run(`(() => {
+ const s={stage:2,step:0,stars:0,missions:0,difficulty:0,branch:0,history:[],maxSyllables:2};
+ const words=[];
+ for(let i=0;i<15;i++){
+  s.step=i%5;s.missions=Math.floor(i/5);
+  const q=newChallenge(s);
+  if(q.word){if(words.slice(-4).includes(q.word.text))return false;words.push(q.word.text);}
+ }
+ return words.length>=11 && new Set(words).size>=9;
+})()`),'Early missions cycle through a broad set of words before revisiting them');
 assert.ok(run(`(() => {
  const s={stage:1,step:0,stars:0,missions:0,difficulty:0,branch:0,history:[],voiceAllowed:false,maxSyllables:2};
- while(s.stage===1 && s.missions<6){
+ while(s.stage===1 && s.missions<4){
   s.session=newChallenge(s);
   s.session.assisted=s.session.type==='read' || s.session.introduction;
   creditChallenge(s);
   s.pendingComplete=false;
  }
- return s.stage===2 && s.mastery[1].assisted>=9;
+ return s.stage===2 && s.mastery[1].assisted>=6;
 })()`),'Manual reading can earn rewards and still progress via independent answers in other rounds');
 assert.equal(run(`(() => {
- const s={stage:27,step:4,stars:0,missions:9,difficulty:0,branch:1,mastery:{27:{independent:11,assisted:0,wrong:0,targets:['kiwi'],kinds:['listen','build','search']}},session:{type:'listen',answer:'kiwi',attempts:0}};
+ const s={stage:27,step:4,stars:0,missions:9,journey:{27:{missions:1,routes:[]}},difficulty:0,branch:1,mastery:{27:{independent:11,assisted:0,wrong:0,targets:['kiwi'],kinds:['listen','build','search']}},session:{type:'listen',answer:'kiwi',attempts:0}};
  creditChallenge(s);
  return s.stage===27 && s.finishedScene===27 && s.journey[27].learned && s.journey[27].routes.includes(1);
 })()`),true,'The final letter unlocks the concert instead of looping');
@@ -34,7 +46,7 @@ assert.equal(run("restoreChallenge({type:'listen',answer:'um',options:['um','mi'
 assert.equal(run("restoreChallenge({type:'build',answer:'tomate',word:{text:'tomate'},options:[{id:0},{id:1},{id:2}]},{stage:5,difficulty:2,maxSyllables:2,simpleSyllables:true})"),null);
 assert.equal(run("restoreChallenge({type:'picture',answer:'pipa',word:{text:'pipa'},options:[{text:'pipa',emoji:'🔍'},{text:'mesa',emoji:'🪑'}]},{stage:5,difficulty:2,maxSyllables:2})"),null);
 run("var score={stage:1,step:0,stars:0,missions:0,difficulty:0,history:[],maxSyllables:2,session:{solved:false,type:'listen',answer:'la',attempts:2,assisted:true},success:0};creditChallenge(score)");assert.equal(run('score.stars'),1);assert.equal(run('score.mastery[1].independent'),0,'Assistance is not independent mastery');
-run("score.mastery[1]={independent:11,assisted:1,wrong:0,targets:['la','le','li','lo'],kinds:['listen','build','search']};score.step=4;score.session={solved:false,type:'listen',answer:'lu',attempts:0};creditChallenge(score)");assert.equal(run('score.stage'),2);assert.equal(run('score.pendingComplete'),true);
+run("score.mastery[1]={independent:11,assisted:1,wrong:0,targets:['la','le','li','lo'],kinds:['listen','build','search']};score.journey={1:{missions:1,routes:[]}};score.step=4;score.session={solved:false,type:'listen',answer:'lu',attempts:0};creditChallenge(score)");assert.equal(run('score.stage'),2);assert.equal(run('score.pendingComplete'),true);
 const originals=run("[...new Map([...words.map(w=>w[0]),...EXTRA_WORDS.map(w=>w[0]),...EXTRA_REVIEWED.map(w=>w[0])].map(w=>[plain(w),w])).values()]");
 const rows=originals.map(text=>{const item=JSON.parse(run(`JSON.stringify(CHILD_WORDS.find(w=>w.text===${JSON.stringify(text)})||null)`));const reason=run(`EXCLUSION_REASONS[${JSON.stringify(text)}]||'Fuera del vocabulario familiar revisado; no se usa en retos.'`);return {text,status:item?(item.picture?'Dibujo aprobado':'Solo lectura, sin dibujo'):'Excluida',picture:item?.emoji||'—',parts:item?.parts.join(' · ')||'—',stage:item?.stage??'—',initial:item&&item.parts.length<=2&&run(`eligibleChildWord(CHILD_WORDS.find(w=>w.text===${JSON.stringify(text)}),{stage:27,difficulty:2,maxSyllables:2,simpleSyllables:true})`)?'Sí, cuando se conozcan sus letras':'No',reason:item?(item.picture?'Objeto literal familiar; nombre presentado con voz antes del primer reto.':'Lectura/escucha; ningún icono pretende representar su significado.'):reason}});
 const report='# Revisión palabra por palabra\n\nRevisión editorial del catálogo y sus asociaciones; no sustituye una observación con Ada. Los dibujos siguen siendo pictogramas del sistema: su reconocimiento real se debe contrastar con la niña. Las palabras sin imagen clara usan lectura/escucha sin dibujo semántico.\n\n'+`Se revisaron ${rows.length} entradas únicas: ${rows.filter(r=>r.status==='Dibujo aprobado').length} con imagen, ${rows.filter(r=>r.status==='Solo lectura, sin dibujo').length} sin imagen y ${rows.filter(r=>r.status==='Excluida').length} excluidas.\n\n`+'| Palabra | Decisión | Imagen | Sílabas | Etapa mínima | Modo inicial de 2 sílabas simples | Motivo |\n|---|---|---|---|---|---|---|\n'+rows.map(r=>`| ${r.text} | ${r.status} | ${r.picture} | ${r.parts} | ${r.stage} | ${r.initial} | ${r.reason} |`).join('\n')+'\n';fs.writeFileSync('REVISION_PALABRAS.md',report);

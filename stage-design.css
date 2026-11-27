@@ -153,3 +153,16 @@ body[data-route="game"] .character-stage::after {
   font-size:25px;font-weight:800;box-shadow:0 4px #376946;
 }
 .read-complete:active { transform:translateY(3px);box-shadow:0 1px #376946 }
+
+.song-pieces {display:flex;justify-content:center;flex-wrap:wrap;gap:7px;margin:12px auto}
+.song-piece {display:grid;place-items:center;width:clamp(32px,10vw,49px);aspect-ratio:1;border-radius:14px;border:1px dashed #baabd7;background:#39295e;color:#e4d6fa;font-size:clamp(16px,5vw,26px)}
+.song-piece.found {border:2px solid #fff2c0;background:hsl(var(--piece-hue) 59% 29%);box-shadow:0 3px 0 #181133}
+.story-cinema #story-play[hidden] {display:none}
+.story-partners {display:flex;justify-content:center;gap:12px;margin-top:10px}
+.story-partners button {display:grid;place-items:center;gap:3px;width:min(43%,145px);min-height:86px;padding:5px 8px 9px;border:2px solid #c9b2fa;border-radius:20px;background:#39295e;color:#fff5d4;font:inherit;font-weight:750}
+.story-partners img {width:68px;height:66px;object-fit:contain}
+.story-partners .partner-picked {border-color:#ffdc82;background:#634b87;animation:partner-light .55s ease-out}
+.scene-object-finish {font-size:55px;display:inline-block;animation:partner-light .55s ease-out}
+@keyframes partner-light {50%{transform:translateY(-6px) scale(1.08);filter:drop-shadow(0 0 16px #ffe79b)}}
+@media(max-width:550px) {.story-cinema:has(.story-partners) #story-stage {min-height:160px}.story-cinema:has(.story-partners) .story-shot img {max-height:160px}}
+@media(prefers-reduced-motion:reduce) {.story-partners .partner-picked,.scene-object-finish {animation:none}}
